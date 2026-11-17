@@ -1,0 +1,28 @@
+/* Original motions for PRESTIQUE Workspace. No third-party motion code copied. */
+.pw-pressable { transition: transform var(--pw-motion-fast) var(--pw-ease-out), box-shadow var(--pw-motion-normal) ease, background-color var(--pw-motion-normal) ease; transform: translateZ(0); }
+.pw-pressable:active { transform: scale(.975); }
+@media (hover:hover) and (pointer:fine) { .pw-pressable:hover { transform: translateY(-2px); } .pw-pressable:hover:active { transform: scale(.975); } }
+.pw-pressable:focus-visible { outline: 3px solid var(--pw-focus); outline-offset: 3px; }
+.pw-card-enter { animation: pw-card-enter var(--pw-motion-panel) var(--pw-ease-out) both; }
+@keyframes pw-card-enter { from { opacity: 0; transform: translateY(8px); } to { opacity:1; transform: translateY(0); } }
+.pw-logo-enter { animation: pw-logo-enter var(--pw-motion-scene) var(--pw-ease-out) both; transform-origin: center; }
+@keyframes pw-logo-enter { from { opacity:0; transform: translateY(10px) scale(.96); } to { opacity:1; transform:translateY(0) scale(1); } }
+.pw-mark-ambient { animation: pw-mark-ambient var(--pw-motion-ambient) ease-in-out infinite; transform-origin:center; }
+@keyframes pw-mark-ambient { 0%,100% {transform: translateY(0); filter:drop-shadow(0 0 0 rgba(59,93,244,0));} 50% {transform:translateY(-3px); filter:drop-shadow(0 12px 16px rgba(59,93,244,.08));} }
+.pw-success-pop { animation: pw-success-pop var(--pw-motion-normal) var(--pw-ease-out) both; }
+@keyframes pw-success-pop { from {opacity:.3; transform:scale(.82);} to {opacity:1; transform:scale(1);} }
+.pw-error-shake { animation: pw-error-shake var(--pw-motion-panel) ease-in-out 1; }
+@keyframes pw-error-shake {0%,100%{transform:translateX(0)} 23%{transform:translateX(-3px)} 55%{transform:translateX(3px)} 80%{transform:translateX(-1px)}}
+.pw-modal-enter { animation: pw-modal-enter var(--pw-motion-panel) var(--pw-ease-out) both; }
+@keyframes pw-modal-enter { from { opacity:0; transform:translateY(8px) scale(.99);}to{opacity:1;transform:translateY(0) scale(1);} }
+.pw-upload-progress { position:relative; overflow:hidden; }
+.pw-upload-progress::after { content:''; position:absolute;inset:0; background:linear-gradient(105deg, transparent 0%,rgba(59,93,244,.11) 48%,transparent 100%); transform:translateX(-100%); animation:pw-progress 1.6s ease-in-out infinite;pointer-events:none; }
+@keyframes pw-progress { to {transform:translateX(100%);} }
+.pw-signal {display:inline-block; width:8px; height:8px; background:var(--pw-brand-blue); border-radius:999px; vertical-align:middle;}
+.pw-signal[data-status='saved'] {background:var(--pw-success);}
+.pw-signal[data-status='error'] {background:var(--pw-danger);}
+.pw-signal[data-status='saving'] {animation:pw-pulse 1s ease-in-out infinite;}
+@keyframes pw-pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4; transform:scale(.72)} }
+@media (prefers-reduced-motion:reduce) {
+  *,*::before,*::after {animation-duration:.01ms !important;animation-iteration-count:1 !important;scroll-behavior:auto !important; transition-duration:.01ms !important;}
+}

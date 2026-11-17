@@ -1,0 +1,80 @@
+import { expect, test, type Page } from '@playwright/test'
+
+async function create(page: Page, button: string, field: string, value: string) {
+  await page.getByRole('button', { name: button, exact: true }).click()
+  const dialog = page.getByRole('dialog')
+  await dialog.getByRole('textbox', { name: field }).fill(value)
+  await dialog.getByRole('button', { name: '만들기', exact: true }).click()
+  await expect(dialog).toBeHidden()
+}
+
+test('redesigned navigation moves documents and folders with native drag and drop', async ({ page }) => {
+  await page.goto('./')
+  await create(page, '새 작업공간', '작업공간 이름', 'PRESTIQUE')
+  await create(page, '새 프로젝트', '프로젝트 이름', '연구개발')
+  const tree = page.getByRole('navigation', { name: '프로젝트와 폴더' })
+  await create(page, '새 폴더', '폴더 이름', '실험 기록')
+  await tree.getByRole('button', { name: '연구개발', exact: true }).click()
+  await create(page, '새 폴더', '폴더 이름', '2026년')
+  await tree.getByRole('button', { name: '연구개발', exact: true }).click()
+  await create(page, '새 문서', '문서 제목', '산화 안정성 메모')
+  await page.locator('.ProseMirror').fill('문서 이동 후에도 내용이 그대로 남습니다.')
+  await expect(page.getByText('저장 완료', { exact: true })).toBeVisible()
+  const record = tree.getByRole('button', { name: '산화 안정성 메모', exact: true })
+  const experiments = tree.getByRole('button', { name: '실험 기록', exact: true })
+  await record.dragTo(experiments)
+  await expect(page.locator('.document-top .breadcrumb')).toContainText('실험 기록')
+  await experiments.dragTo(tree.getByRole('button', { name: '2026년', exact: true }))
+  await expect(page.locator('.document-top .breadcrumb')).toContainText('연구개발 / 2026년 / 실험 기록')
+  await page.reload()
+  await expect(page.locator('.document-top .breadcrumb')).toContainText('연구개발 / 2026년 / 실험 기록')
+  await expect(page.locator('.ProseMirror')).toContainText('문서 이동 후에도 내용이 그대로 남습니다.')
+})
+
+test('redesigned document fits desktop, tablet and mobile and retains keyboard focus', async ({ page }, info) => {
+  await page.setViewportSize({ width: 1440, height: 940 })
+  await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'reduce' })
+  await page.goto('./')
+  await expect(page.getByRole('button', { name: '새 작업공간', exact: true })).toBeVisible()
+  await page.evaluate(() => document.fonts.ready)
+  await page.screenshot({ path: info.outputPath('redesign-welcome.png') })
+  await create(page, '새 작업공간', '작업공간 이름', 'PRESTIQUE LABS')
+  await create(page, '새 프로젝트', '프로젝트 이름', '소재 연구')
+  await create(page, '새 폴더', '폴더 이름', '산화 안정성')
+  await create(page, '새 문서', '문서 제목', '시료 보관 조건')
+  const tree = page.getByRole('navigation', { name: '프로젝트와 폴더' })
+  await tree.getByRole('button', { name: '산화 안정성', exact: true }).click()
+  await create(page, '새 문서', '문서 제목', '가속 산화 시험 기록')
+  await page.getByRole('button', { name: 'Markdown', exact: true }).click()
+  await page.locator('.cm-content').fill([
+    '## 실험 목적',
+    '시료 보관 온도에 따른 오일의 품질 변화를 기록한다. 같은 로트의 시료를 나누어 동일한 시간에 측정한다.',
+    '## 시험 조건',
+    '| 시료 | 보관 온도 | 점검 주기 |\n| --- | --- | --- |\n| 대조군 A | 25 °C | 7일 |\n| 시험군 B | 40 °C | 3일 |',
+    '## 측정 준비',
+    '- [x] 실험 노트와 시료 ID 연결\n- [ ] 초기 산가 및 과산화물가 기록\n- [ ] 사진 첨부',
+  ].join('\n\n'))
+  await expect(page.getByText('저장 완료', { exact: true })).toBeVisible()
+  await page.getByRole('button', { name: '시각적 편집', exact: true }).click()
+  await page.getByRole('button', { name: '문서 정보', exact: true }).click()
+  await expect(page.locator('.ProseMirror table')).toBeVisible()
+  await expect(page.locator('.ProseMirror li[data-checked]').first()).toHaveCSS('display', 'grid')
+  await expect(page.getByRole('complementary', { name: '문서 정보' })).toBeVisible()
+  await page.screenshot({ path: info.outputPath('redesign-desktop.png') })
+  await page.setViewportSize({ width: 1024, height: 768 })
+  await expect(page.locator('.inspector')).toHaveCSS('position', 'fixed')
+  await page.screenshot({ path: info.outputPath('redesign-tablet.png') })
+  await page.keyboard.press('Escape')
+  await expect(page.getByRole('complementary', { name: '문서 정보' })).toHaveCount(0)
+  await page.setViewportSize({ width: 390, height: 844 })
+  const menu = page.getByRole('button', { name: '탐색 메뉴', exact: true })
+  await menu.click()
+  await expect(menu).toHaveAttribute('aria-expanded', 'true')
+  await expect(tree).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(menu).toBeFocused()
+  await expect(tree).toBeHidden()
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(390)
+  await menu.blur()
+  await page.screenshot({ path: info.outputPath('redesign-mobile.png'), fullPage: true })
+})

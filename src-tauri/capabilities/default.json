@@ -1,0 +1,10 @@
+{
+  "identifier": "default",
+  "description": "Workspace IPC runs in the local application window.",
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "core:default"
+  ]
+}

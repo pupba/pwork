@@ -1,0 +1,36 @@
+/* Workspace product palette; the PRESTIQUE LABS master assets are separate. */
+:root {
+  --pw-brand-blue: #334cdd;
+  --pw-brand-indigo: #263dc0;
+  --pw-brand-slate: #575a60;
+  --pw-ink: #191a1c;
+  --pw-ink-subtle: #65666d;
+  --pw-surface: #fafaf8;
+  --pw-card: #ffffff;
+  --pw-border: #e6e6e2;
+  --pw-success: #168568;
+  --pw-danger: #bc3442;
+  --pw-focus: #334cdd;
+  --pw-radius-sm: 6px;
+  --pw-radius-md: 9px;
+  --pw-radius-xl: 13px;
+  --pw-shadow: 0 16px 48px rgb(18 18 20 / 12%), 0 1px 4px rgb(18 18 20 / 8%);
+  --pw-font: 'Geist Variable', 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
+  --pw-mono: 'Geist Mono Variable', ui-monospace, Consolas, monospace;
+  --pw-motion-instant: 80ms;
+  --pw-motion-fast: 140ms;
+  --pw-motion-normal: 220ms;
+  --pw-motion-panel: 300ms;
+  --pw-motion-scene: 360ms;
+  --pw-motion-ambient: 8000ms;
+  --pw-ease-out: cubic-bezier(.22, 1, .36, 1);
+  --pw-ease-standard: cubic-bezier(.4,0,.2,1);
+}
+:root[data-theme='dark'] {
+  --pw-ink: #ececed;
+  --pw-ink-subtle: #a3a4aa;
+  --pw-surface: #1b1b1d;
+  --pw-card: #18181a;
+  --pw-border: #343437;
+  --pw-focus: #a4adff;
+}
